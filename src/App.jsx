@@ -6,7 +6,7 @@ const slides = [
       videoUrl: 'https://example.com/video1.mp4',
       coverImageUrl: 'https://solid-js-slider.s3.us-east-1.amazonaws.com/images/alan_96167_a_colour_crayon_sketch_of_two_young_men_in_khaki_out_9a27b7b7-6e84-45b8-959a-4128c44e7a26.webp',
       title: 'Introductory Video',
-      description: 'An introduction to our product features.',
+      description: 'Our product features: Introduction.',
       cta: 'Watch Now',
       category: 'Product Demos'
     },
@@ -15,7 +15,7 @@ const slides = [
       videoUrl: 'https://example.com/video5.mp4',
       coverImageUrl: 'https://solid-js-slider.s3.us-east-1.amazonaws.com/images/t.ptr_hyper-realistic_169_image_of_Saturn_set_against_the_backd_907d83c1-777b-41b9-8b6a-33ec1c96476b.webp',
       title: 'Customer Experience',
-      description: 'Hear what our customers have to say.',
+      description: 'What our customers have to say.',
       cta: 'Watch Story',
       category: 'Customer Stories'
     }
@@ -261,11 +261,12 @@ function App() {
   return (
     <>
       <div class="w-full bg-black h-[60px] flex">
-        <div class="max-w-[500px] overflow-scroll inline-flex m-auto gap-10 no-scrollbar">
+        <div class="max-w-[500px] overflow-scroll inline-flex m-auto gap-8 no-scrollbar">
           <For each={slideCategories()}>
             {(category, i) => (
               <div
-                class="text-white text-nowrap cursor-pointer"
+                class={`text-black text-nowrap cursor-pointer bg-white py-2 px-6 rounded-full hover:bg-white
+                  ${currentCategory() !== category && "opacity-75"}`}
                 onClick={() => setCurrentCategory(category)}
               >
                 {category}
