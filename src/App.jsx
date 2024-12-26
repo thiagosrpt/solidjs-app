@@ -260,8 +260,8 @@ function App() {
 
   return (
     <>
-      <div class="w-full bg-black h-[60px] flex">
-        <div class="max-w-[500px] overflow-scroll inline-flex m-auto gap-8 no-scrollbar">
+      <div class="w-full bg-gray-600 h-[60px] flex">
+        <div class="max-w-[500px] overflow-scroll inline-flex m-auto gap-6 no-scrollbar">
           <For each={slideCategories()}>
             {(category, i) => (
               <div
