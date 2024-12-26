@@ -260,12 +260,12 @@ function App() {
 
   return (
     <>
-      <div class="w-full bg-black h-[60px] flex">
+      <div class="w-full bg-gray-500 h-[60px] flex">
         <div class="max-w-[500px] overflow-scroll inline-flex m-auto gap-8 no-scrollbar">
           <For each={slideCategories()}>
             {(category, i) => (
               <div
-                class={`text-black text-nowrap cursor-pointer bg-white py-2 px-6 rounded-full hover:bg-white
+                class={`text-gray-800 text-nowrap cursor-pointer bg-white py-2 px-6 rounded-full hover:bg-white
                   ${currentCategory() !== category && "opacity-75"}`}
                 onClick={() => setCurrentCategory(category)}
               >
