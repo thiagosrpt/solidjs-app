@@ -1,35 +1,69 @@
-## Usage
+# solidjs-app
 
-Those templates dependencies are maintained via [pnpm](https://pnpm.io) via `pnpm up -Lri`.
+A [SolidJS](https://solidjs.com) app built with [Vite](https://vitejs.dev) and styled with [Tailwind CSS](https://tailwindcss.com).
 
-This is the reason you see a `pnpm-lock.yaml`. That being said, any package manager will work. This file can be safely be removed once you clone a template.
+## Running locally
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org) 18 or newer (required by Vite 5)
+- npm (comes with Node.js). pnpm or yarn also work.
+
+### 1. Clone the repository
 
 ```bash
-$ npm install # or pnpm install or yarn install
+git clone <repository-url>
+cd solidjs-app
 ```
 
-### Learn more on the [Solid Website](https://solidjs.com) and come chat with us on our [Discord](https://discord.com/invite/solidjs)
+### 2. Install dependencies
 
-## Available Scripts
+```bash
+npm install
+```
 
-In the project directory, you can run:
+The repo has both a `package-lock.json` and a `pnpm-lock.yaml`. Use the lockfile that matches your package manager (`npm install` or `pnpm install`).
 
-### `npm run dev` or `npm start`
+### 3. Start the dev server
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```bash
+npm run dev
+```
 
-The page will reload if you make edits.<br>
+This runs two processes at the same time:
 
-### `npm run build`
+- **Tailwind CLI** watches `src/index.css` and writes the compiled styles to `src/output.css`.
+- **Vite** serves the app with hot reloading.
 
-Builds the app for production to the `dist` folder.<br>
-It correctly bundles Solid in production mode and optimizes the build for the best performance.
+Open [http://localhost:3000](http://localhost:3000) in your browser. The page reloads when you save changes.
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+> **Note:** `npm start` runs only Vite, without the Tailwind watcher. If you use it, new Tailwind classes won't show up until you rebuild `src/output.css`. Use `npm run dev` for local development.
 
-## Deployment
+## Available scripts
 
-You can deploy the `dist` folder to any static host provider (netlify, surge, now, etc.)
-# solidjs-app
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Starts Vite and the Tailwind watcher together (recommended) |
+| `npm start` | Starts only the Vite dev server |
+| `npm run build` | Builds the app for production into `dist/` |
+| `npm run serve` | Serves the production build from `dist/` locally to preview it |
+
+## Building for production
+
+```bash
+npm run build
+npm run serve   # optional: preview the build locally
+```
+
+`npm run build` does not run Tailwind. If you changed any Tailwind classes, run `npm run dev` (or `npx tailwindcss -i ./src/index.css -o ./src/output.css`) first so that `src/output.css` is up to date.
+
+You can deploy the `dist` folder to any static host (Netlify, Vercel, Surge, etc.).
+
+## Optional: Solid DevTools
+
+`solid-devtools` is installed but turned off. To turn it on, uncomment the `devtools` import and the `devtools()` plugin line in `vite.config.js`.
+
+## Learn more
+
+- [Solid documentation](https://docs.solidjs.com)
+- [Solid Discord](https://discord.com/invite/solidjs)
