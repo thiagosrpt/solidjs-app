@@ -1,127 +1,5 @@
-
-const slides = [
-  [
-    {
-      type: 'video',
-      videoUrl: 'https://example.com/video1.mp4',
-      coverImageUrl: 'https://solid-js-slider.s3.us-east-1.amazonaws.com/images/alan_96167_a_colour_crayon_sketch_of_two_young_men_in_khaki_out_9a27b7b7-6e84-45b8-959a-4128c44e7a26.webp',
-      title: 'Introductory Video',
-      description: 'Our product features: Introduction.',
-      cta: 'Watch Now',
-      category: 'Product Demos'
-    },
-    {
-      type: 'video',
-      videoUrl: 'https://example.com/video5.mp4',
-      coverImageUrl: 'https://solid-js-slider.s3.us-east-1.amazonaws.com/images/t.ptr_hyper-realistic_169_image_of_Saturn_set_against_the_backd_907d83c1-777b-41b9-8b6a-33ec1c96476b.webp',
-      title: 'Customer Experience',
-      description: 'What our customers have to say.',
-      cta: 'Watch Story',
-      category: 'Customer Stories'
-    }
-  ],
-  [
-    {
-      type: 'video',
-      videoUrl: 'https://example.com/video2.mp4',
-      coverImageUrl: 'https://solid-js-slider.s3.us-east-1.amazonaws.com/images/alan_96167_a_colour_crayon_sketch_of_two_young_men_in_safari_ou_e08b5ec0-d5b8-44f2-8a3e-fe46ccb85290.webp',
-      title: 'How It Works',
-      description: 'Step-by-step guide on using the product.',
-      cta: 'Learn More',
-      category: 'Product Demos'
-    },
-    {
-      type: 'image',
-      imageUrl: 'https://example.com/image3.jpg',
-      coverImageUrl: 'https://solid-js-slider.s3.us-east-1.amazonaws.com/images/t.ptr_hyper-realistic_image_of_a_high-end_car_parked_on_a_rain-_56ac3d11-66fe-4fb0-9944-f551435762f7.webp',
-      title: 'User Testimonials',
-      description: 'Read reviews from our happy customers.',
-      cta: 'Read Reviews',
-      category: 'Customer Stories'
-    }
-  ],
-  [
-    {
-      type: 'image',
-      imageUrl: 'https://example.com/image1.jpg',
-      coverImageUrl: 'https://solid-js-slider.s3.us-east-1.amazonaws.com/images/jiraesdae_A_photograph_of_a_volunteer_teacher_in_a_Southeast_As_b4468539-a23c-4952-aa2e-723961a6008e.webp',
-      title: 'Product Showcase',
-      description: 'Explore the product features.',
-      cta: 'View Details',
-      category: 'Product Demos'
-    },
-    {
-      type: 'video',
-      videoUrl: 'https://example.com/video6.mp4',
-      coverImageUrl: 'https://solid-js-slider.s3.us-east-1.amazonaws.com/images/t.ptr_journalistic-style_image_capturing_a_scene_deep_beneath_t_e2a80c88-ad29-4206-8ae5-6986f13528f5.webp',
-      title: 'Success Stories',
-      description: 'Success stories from real users.',
-      cta: 'Watch Now',
-      category: 'Customer Stories'
-    }
-  ],
-  [
-    {
-      type: 'video',
-      videoUrl: 'https://example.com/video3.mp4',
-      coverImageUrl: 'https://solid-js-slider.s3.us-east-1.amazonaws.com/images/t.ptr_a_sleek_modern_smartphone_with_an_edge-to-edge_OLED_displ_9efc3301-d2fd-47da-8bb3-ff3c0313b6b7.webp',
-      title: 'Advanced Features',
-      description: 'Learn about our advanced features.',
-      cta: 'Watch Now',
-      category: 'Product Demos'
-    },
-    {
-      type: 'image',
-      imageUrl: 'https://example.com/image4.jpg',
-      coverImageUrl: 'https://solid-js-slider.s3.us-east-1.amazonaws.com/images/t.ptr_Picture_a_dark_ethereal_scene_where_Saturn_and_its_rings__a66ac341-9313-405c-ae6d-d6774be194a1.webp',
-      title: 'Customer Success',
-      description: 'See how our product helps customers achieve success.',
-      cta: 'Learn More',
-      category: 'Customer Stories'
-    }
-  ],
-  [
-    {
-      type: 'image',
-      imageUrl: 'https://example.com/image2.jpg',
-      coverImageUrl: 'https://solid-js-slider.s3.us-east-1.amazonaws.com/images/t.ptr_a_sleek_modern_smartphone_with_an_edge-to-edge_OLED_displ_abab0275-d63f-4ca3-873a-ff1f75bb6222.webp',
-      title: 'Feature Comparison',
-      description: 'See how we compare with competitors.',
-      cta: 'Compare Now',
-      category: 'Product Demos'
-    },
-    {
-      type: 'video',
-      videoUrl: 'https://example.com/video7.mp4',
-      coverImageUrl: 'https://solid-js-slider.s3.us-east-1.amazonaws.com/images/t.ptr_the_interior_of_this_high-end_car_a_seamless_blend_of_lux_7ab7f5ae-5fb7-4e12-a705-2c806a96bd04.webp',
-      title: 'Community Impact',
-      description: 'How our customers are making a difference.',
-      cta: 'Watch Now',
-      category: 'Customer Stories'
-    }
-  ],
-  [
-    {
-      type: 'video',
-      videoUrl: 'https://example.com/video4.mp4',
-      coverImageUrl: 'https://solid-js-slider.s3.us-east-1.amazonaws.com/images/t.ptr_a_stunning_hyper-realistic_image_of_a_vast_ancient_cave_i_3bf2721b-3c2f-456c-ae2d-35f77eb9f4cb.webp',
-      title: 'Product Demo',
-      description: 'Watch a full demo of our product in action.',
-      cta: 'Watch Demo',
-      category: 'Product Demos'
-    },
-    {
-      type: 'image',
-      imageUrl: 'https://example.com/image5.jpg',
-      coverImageUrl: 'https://solid-js-slider.s3.us-east-1.amazonaws.com/images/t.ptr_the_interior_of_this_high-end_car_a_seamless_blend_of_lux_c285ec3c-7271-4390-bf99-443c0c916cd1.webp',
-      title: 'Customer Spotlight',
-      description: 'Highlighting our standout customers.',
-      cta: 'View Spotlight',
-      category: 'Customer Stories'
-    }
-  ]
-];
 import { createSignal, createEffect, onCleanup, For } from "solid-js";
+import { slides } from "./assets/slide-data";
 
 function App() {
   const [expanded, setExpanded] = createSignal(null);
@@ -129,7 +7,23 @@ function App() {
   const [slideCategories, setSlideCategories] = createSignal([]);
   const [currentCategory, setCurrentCategory] = createSignal(0);
   const [slideAnimationEnded, setSlideAnimationEnded] = createSignal(false);
+  // Initial theme is set by the inline script in index.html before first paint
+  const [theme, setTheme] = createSignal(
+    document.documentElement.classList.contains("dark") ? "dark" : "light"
+  );
   let scrollContainer;
+
+  createEffect(() => {
+    const isDark = theme() === "dark";
+    document.documentElement.classList.toggle("dark", isDark);
+  });
+
+  // Only persist an explicit choice, so first-time visitors keep following the OS setting
+  const toggleTheme = () => {
+    const next = theme() === "dark" ? "light" : "dark";
+    setTheme(next);
+    localStorage.setItem("theme", next);
+  };
 
   createEffect(() => {
     if (expanded()) {
@@ -259,13 +153,14 @@ function App() {
   });
 
   return (
-    <>
-      <div class="w-full bg-gray-700 h-[60px] flex">
+    <div class="min-h-screen flex flex-col">
+      <div class="sticky top-0 z-10 shrink-0 w-full bg-gray-700 dark:bg-gray-900 h-[60px] flex transition-colors duration-300">
         <div class="max-w-[500px] overflow-scroll inline-flex m-auto gap-6 no-scrollbar">
           <For each={slideCategories()}>
             {(category, i) => (
               <div
                 class={`text-gray-800 text-nowrap cursor-pointer bg-white border-gray-300 py-2 px-6 rounded-full hover:bg-white
+                  dark:bg-gray-800 dark:text-gray-100 dark:border dark:border-gray-700 dark:hover:bg-gray-700 transition-colors duration-300
                   ${currentCategory() !== category && "opacity-75"}`}
                 onClick={() => setCurrentCategory(category)}
               >
@@ -274,18 +169,43 @@ function App() {
             )}
           </For>
         </div>
+        <button
+          type="button"
+          onClick={toggleTheme}
+          aria-label={theme() === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          title={theme() === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          class="absolute right-4 top-1/2 -translate-y-1/2 h-10 w-10 flex items-center justify-center rounded-full
+            bg-white text-gray-800 hover:ring-2 hover:ring-gray-300
+            dark:bg-gray-800 dark:text-yellow-300 dark:border dark:border-gray-700 dark:hover:ring-gray-600
+            transition-colors duration-300"
+        >
+          {theme() === "dark" ? (
+            // Sun icon
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+            </svg>
+          ) : (
+            // Moon icon
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          )}
+        </button>
       </div>
+      {/* Fills the space below the menu and centers the carousel vertically */}
+      <main class="flex-1 flex items-center">
       <div
         ref={(el) => (scrollContainer = el)} // Assign the scroll container ref
-        class="snap-x snap-mandatory scroll-smooth inline-flex content-center h-[600px] w-full overflow-x-scroll bg-white gap-2 p-2"
+        class="no-scrollbar snap-x snap-mandatory scroll-smooth flex h-[min(600px,calc(100vh-92px))] w-full overflow-x-scroll gap-2 p-2"
       >
-        {/* Empty div for padding */}
-        <div class={`h-full transition-all shrink-0 w-[50%]`}></div>
+        {/* Spacer: lets the first slide (300px wide + 8px gap) sit in the horizontal center */}
+        <div class="h-full shrink-0 w-[calc(50%-158px)]"></div>
 
         <For each={slides}>
           {(slide, j) => (
             <div
-              class={`relative overflow-hidden snap-center max-w-[1038px] shadow-md transition-all duration-500 ease-in-out shrink-0 h-full bg-red-500 cursor-pointer 
+              class={`relative overflow-hidden snap-center max-w-[1038px] shadow-md transition-all duration-500 ease-in-out shrink-0 h-full bg-gray-200 dark:bg-gray-800 cursor-pointer
                   ${`slide-${j()}` !== expanded() ? "w-[300px]" : "w-[100%]"}
                   ${isExpanded(j()) && "group is-expanded"}
                 `}
@@ -302,7 +222,7 @@ function App() {
                     >
                         <img
                           src={content.coverImageUrl}
-                          alt="Cover Image"
+                          alt={content.title}
                           class="absolute inset-0 object-cover w-full h-[125%] transition-all duration-200 ease-out group-[.is-category]:h-full"
                         />
                       <div
@@ -331,10 +251,11 @@ function App() {
           )}
         </For>
 
-        {/* Empty div for padding */}
-        <div class="h-full transition-all shrink-0 w-[50vw]"></div>
+        {/* Spacer: lets the last slide sit in the horizontal center */}
+        <div class="h-full shrink-0 w-[calc(50%-158px)]"></div>
       </div>
-    </>
+      </main>
+    </div>
   );
 }
 

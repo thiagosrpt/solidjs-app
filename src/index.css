@@ -15,3 +15,14 @@ body {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
       monospace;
   }
+
+@layer utilities {
+  /* Hide scrollbars while keeping scroll (wheel, trackpad, touch) working */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
