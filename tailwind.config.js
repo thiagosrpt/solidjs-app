@@ -9,19 +9,9 @@ module.exports = {
   
   theme: {
     extend: {
-      keyframes: {
-        slide: {
-          '0%': { bottom: "-25%" },
-          '75%': { bottom: "3%" },
-          '100%': { bottom: "0%" },
-        },
-      },
-      animation: {
-        slide: 'slide 300ms ease-in-out', // Create the animation with your timing function and duration
-      },
-      backgroundSize: {
-        'size-125': 'auto 125%', // Adds 125% background size
-        'size-100': 'auto 100%', // Adds 100% background size
+      transitionTimingFunction: {
+        // Gentle ease-in-out: eases away from rest and settles softly, no snap at the start
+        soft: 'cubic-bezier(0.45, 0, 0.15, 1)',
       },
     },
   },

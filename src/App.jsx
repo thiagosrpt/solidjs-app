@@ -1,12 +1,16 @@
-import { createSignal, createEffect, onCleanup, For } from "solid-js";
+import { createSignal, createEffect, onMount, onCleanup, For } from "solid-js";
 import { slides } from "./assets/slide-data";
+
+// Keep in sync with the slide's `duration-[800ms]` class
+const SLIDE_DURATION = 800;
+const CENTER_TOLERANCE = 2; // px
 
 function App() {
   const [expanded, setExpanded] = createSignal(null);
-  const [activeSlide, setActiveSlide] = createSignal(null);
   const [slideCategories, setSlideCategories] = createSignal([]);
   const [currentCategory, setCurrentCategory] = createSignal(0);
-  const [slideAnimationEnded, setSlideAnimationEnded] = createSignal(false);
+  // True while a slide is changing width; scroll-snap is paused so we can steer the scroll
+  const [resizing, setResizing] = createSignal(false);
   // Initial theme is set by the inline script in index.html before first paint
   const [theme, setTheme] = createSignal(
     document.documentElement.classList.contains("dark") ? "dark" : "light"
@@ -25,55 +29,107 @@ function App() {
     localStorage.setItem("theme", next);
   };
 
-  createEffect(() => {
-    if (expanded()) {
-      let slide = document.getElementById(expanded());
-
-      const handleTransitionEnd = (event) => {
-        if (event.propertyName === "width") {
-          setSlideAnimationEnded(true);
-          console.log("ended animation");
-        }
-      };
-
-      slide.addEventListener("transitionend", handleTransitionEnd);
-
-      onCleanup(() => {
-        slide.removeEventListener("transitionend", handleTransitionEnd); // Clean up the listener
-      });
-    }
-  });
-
-  const expandSlide = (slide) => {
-    const slideElement = document.getElementById(slide);
-    if (!slideElement) return;
-    setSlideAnimationEnded(false);
-
-    // Calculate the offset from the center
-    const slideRect = slideElement.getBoundingClientRect();
+  // Keep the given slide's center on the container's center (instant, no smooth scroll)
+  const centerOn = (el) => {
+    const slideRect = el.getBoundingClientRect();
     const containerRect = scrollContainer.getBoundingClientRect();
-    const slideCenter = slideRect.left + slideRect.width / 2;
-    const containerCenter = containerRect.left + containerRect.width / 2;
-    const offsetFromCenter = slideCenter - containerCenter;
+    scrollContainer.scrollLeft +=
+      slideRect.left + slideRect.width / 2 - (containerRect.left + containerRect.width / 2);
+  };
 
-    // If the slide is already in the center, trigger the expand function directly
-    if (offsetFromCenter === 0) {
-      if (slide === expanded()) {
-        setExpanded(null);
-        setActiveSlide(null);
+  const offsetFromCenter = (el) => {
+    const slideRect = el.getBoundingClientRect();
+    const containerRect = scrollContainer.getBoundingClientRect();
+    return slideRect.left + slideRect.width / 2 - (containerRect.left + containerRect.width / 2);
+  };
+
+  // While a slide changes width, pin it to the center every frame so it grows/shrinks
+  // symmetrically instead of growing to the right and then being yanked back by scroll-snap.
+  let rafId;
+  const keepCentered = (el) => {
+    cancelAnimationFrame(rafId);
+    setResizing(true);
+    const end = performance.now() + SLIDE_DURATION + 80;
+    const tick = (now) => {
+      centerOn(el);
+      if (now < end) {
+        rafId = requestAnimationFrame(tick);
       } else {
-        setExpanded(slide);
-        setActiveSlide(slideElement);
+        setResizing(false);
       }
+    };
+    rafId = requestAnimationFrame(tick);
+  };
+
+  const open = (el) => {
+    pendingSlide = null;
+    setExpanded(el.id);
+    keepCentered(el);
+  };
+
+  const collapse = (el) => {
+    setExpanded(null);
+    keepCentered(el);
+  };
+
+  // Scroll the target into the center; it opens once scrolling settles (see onScrollSettled)
+  const goTo = (el) => {
+    // Release the previous centering loop so it can't fight this scroll
+    cancelAnimationFrame(rafId);
+    setResizing(false);
+    if (Math.abs(offsetFromCenter(el)) < CENTER_TOLERANCE) {
+      open(el);
     } else {
-      slideElement.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-        inline: "center",
-      });
-      setActiveSlide(slideElement);
+      pendingSlide = el;
+      el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
     }
   };
+
+  let pendingSlide = null;
+  let switchTimer;
+  const expandSlide = (id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    clearTimeout(switchTimer);
+
+    const current = expanded();
+    if (current === id) {
+      collapse(el);
+      return;
+    }
+    if (current) {
+      // Close the open slide first, then travel to the new one: one motion at a time
+      collapse(document.getElementById(current));
+      switchTimer = setTimeout(() => goTo(el), SLIDE_DURATION);
+    } else {
+      goTo(el);
+    }
+  };
+
+  const onScrollSettled = () => {
+    if (pendingSlide && !resizing() && Math.abs(offsetFromCenter(pendingSlide)) < CENTER_TOLERANCE) {
+      open(pendingSlide);
+    }
+  };
+
+  onMount(() => {
+    // `scrollend` where supported, with a debounced `scroll` fallback (e.g. older Safari)
+    let debounce;
+    const handleScroll = () => {
+      clearTimeout(debounce);
+      debounce = setTimeout(onScrollSettled, 120);
+    };
+    scrollContainer.addEventListener("scrollend", onScrollSettled);
+    scrollContainer.addEventListener("scroll", handleScroll, { passive: true });
+
+    onCleanup(() => {
+      clearTimeout(debounce);
+      clearTimeout(switchTimer);
+      cancelAnimationFrame(rafId);
+      scrollContainer.removeEventListener("scrollend", onScrollSettled);
+      scrollContainer.removeEventListener("scroll", handleScroll);
+    });
+  });
 
   const getUniqueCategories = (slides) => {
     const categories = new Set();
@@ -97,55 +153,7 @@ function App() {
     }
   };
 
-  //Check Expanded Status
-  const isExpanded = (s) => {
-    if (`slide-${s}` === expanded()) {
-      console.log("slide", s);
-      return true;
-    } else {
-      console.log("slide", s);
-      return false;
-    }
-  };
-
-  const checkSelectedSlidePosition = () => {
-    if (activeSlide()) {
-      const slideElement = activeSlide();
-      const scrollContainerElement = scrollContainer;
-
-      if (slideElement && scrollContainerElement) {
-        const slideRect = slideElement.getBoundingClientRect();
-        const containerRect = scrollContainerElement.getBoundingClientRect();
-
-        const slideCenter = slideRect.left + slideRect.width / 2;
-        const containerCenter = containerRect.left + containerRect.width / 2;
-
-        const offsetFromCenter = slideCenter - containerCenter;
-
-        if (offsetFromCenter === 0) {
-          setExpanded(slideElement.id);
-        }
-
-        //return offsetFromCenter
-      }
-    }
-  };
-
-  createEffect(() => {
-    const handleScroll = () => {
-      checkSelectedSlidePosition();
-    };
-
-    if (scrollContainer) {
-      scrollContainer.addEventListener("scroll", handleScroll);
-    }
-
-    onCleanup(() => {
-      if (scrollContainer) {
-        scrollContainer.removeEventListener("scroll", handleScroll);
-      }
-    });
-  });
+  const isExpanded = (s) => `slide-${s}` === expanded();
 
   createEffect(() => {
     setSlideCategories(getUniqueCategories(slides));
@@ -197,7 +205,8 @@ function App() {
       <main class="flex-1 flex items-center">
       <div
         ref={(el) => (scrollContainer = el)} // Assign the scroll container ref
-        class="no-scrollbar snap-x snap-mandatory scroll-smooth flex h-[min(600px,calc(100vh-92px))] w-full overflow-x-scroll gap-2 p-2"
+        class={`no-scrollbar snap-x flex h-[min(600px,calc(100vh-92px))] w-full overflow-x-scroll gap-2 p-2
+          ${resizing() ? "snap-none" : "snap-mandatory scroll-smooth"}`}
       >
         {/* Spacer: lets the first slide (300px wide + 8px gap) sit in the horizontal center */}
         <div class="h-full shrink-0 w-[calc(50%-158px)]"></div>
@@ -205,46 +214,49 @@ function App() {
         <For each={slides}>
           {(slide, j) => (
             <div
-              class={`relative overflow-hidden snap-center max-w-[1038px] shadow-md transition-all duration-500 ease-in-out shrink-0 h-full bg-gray-200 dark:bg-gray-800 cursor-pointer
-                  ${`slide-${j()}` !== expanded() ? "w-[300px]" : "w-[100%]"}
-                  ${isExpanded(j()) && "group is-expanded"}
+              class={`relative overflow-hidden snap-center max-w-[1038px] shrink-0 h-full bg-gray-200 dark:bg-gray-800 cursor-pointer
+                  shadow-md transition-[width,box-shadow] duration-[800ms] ease-soft motion-reduce:transition-none
+                  ${isExpanded(j()) ? "w-full shadow-2xl group is-expanded" : "w-[300px]"}
+                  ${resizing() ? "will-change-[width]" : ""}
                 `}
               onClick={() => expandSlide(`slide-${j()}`)}
               id={`slide-${j()}`}
             >
               <For each={slide}>
-                {(content, c) => (
-                  <>
+                {(content) => (
+                  <div
+                    class={`absolute inset-0 text-white transition-opacity duration-700 ease-out motion-reduce:transition-none
+                    ${isCurrentCategory(content.category)}
+                    `}
+                  >
+                    {/* Fixed at the expanded size and centered: widening the slide reveals more of the
+                        image like a curtain, instead of re-cropping/rescaling it on every frame */}
+                    <img
+                      src={content.coverImageUrl}
+                      alt={content.title}
+                      class="absolute top-0 left-1/2 h-full w-[1038px] min-w-full max-w-none -translate-x-1/2 object-cover
+                        scale-105 transition-transform duration-[1200ms] ease-soft motion-reduce:transition-none
+                        group-[.is-category]:scale-100"
+                    />
                     <div
-                      class={`absolute top-0 h-full w-full text-white transition-all duration-500 ease-in-out
-                      ${isCurrentCategory(content.category)}
-                      `}
+                      class="absolute top-0 inset-x-0 px-4 transition-[transform,opacity] duration-500 ease-soft motion-reduce:transition-none
+                        group-[.is-expanded]:-translate-y-full group-[.is-expanded]:opacity-0"
                     >
-                        <img
-                          src={content.coverImageUrl}
-                          alt={content.title}
-                          class="absolute inset-0 object-cover w-full h-[125%] transition-all duration-200 ease-out group-[.is-category]:h-full"
-                        />
-                      <div
-                        class="absolute w-full transition-all duration-500 top-0 px-4 
-                          group-[.is-expanded]:top-[-25%]"
-                      >
-                        <h2 class="text-lg p-2 text-center bg-black bg-opacity-40 rounded-b-2xl max-w-[250px] mx-auto">
-                          {content.title}
-                        </h2>
-                      </div>
-                      <div
-                        class={`absolute w-full p-2 bg-black bg-opacity-40 bottom-[-25%] opacity-0
-                        ${
-                          slideAnimationEnded() &&
-                          "group-[.is-expanded]:animate-slide group-[.is-expanded]:bottom-0 group-[.is-expanded]:opacity-100"
-                        }`}
-                      >
-                        <h2 class="text-lg">{content.title}</h2>
-                        <p>{content.description}</p>
-                      </div>
+                      <h2 class="text-lg p-2 text-center bg-black/40 backdrop-blur-sm rounded-b-2xl max-w-[250px] mx-auto">
+                        {content.title}
+                      </h2>
                     </div>
-                  </>
+                    {/* Caption: fades and rises in as the slide finishes opening; leaves quickly on close */}
+                    <div
+                      class="absolute bottom-0 inset-x-0 px-6 pt-16 pb-6 bg-gradient-to-t from-black/75 via-black/40 to-transparent
+                        translate-y-6 opacity-0 transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none
+                        group-[.is-expanded]:translate-y-0 group-[.is-expanded]:opacity-100
+                        group-[.is-expanded]:duration-700 group-[.is-expanded]:delay-300"
+                    >
+                      <h2 class="text-xl font-medium">{content.title}</h2>
+                      <p class="mt-1 max-w-2xl text-white/90">{content.description}</p>
+                    </div>
+                  </div>
                 )}
               </For>
             </div>
