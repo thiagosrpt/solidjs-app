@@ -8,7 +8,7 @@ const CENTER_TOLERANCE = 2; // px
 function App() {
   const [expanded, setExpanded] = createSignal(null);
   const [slideCategories, setSlideCategories] = createSignal([]);
-  const [currentCategory, setCurrentCategory] = createSignal(0);
+  const [currentCategory, setCurrentCategory] = createSignal(slides[0][0].category);
   // True while a slide is changing width; scroll-snap is paused so we can steer the scroll
   const [resizing, setResizing] = createSignal(false);
   // Initial theme is set by the inline script in index.html before first paint
@@ -26,7 +26,11 @@ function App() {
   const toggleTheme = () => {
     const next = theme() === "dark" ? "light" : "dark";
     setTheme(next);
-    localStorage.setItem("theme", next);
+    try {
+      localStorage.setItem("theme", next);
+    } catch {
+      // Storage can be blocked (private mode, site data disabled); the theme still applies for this visit
+    }
   };
 
   // Keep the given slide's center on the container's center (instant, no smooth scroll)
@@ -155,10 +159,7 @@ function App() {
 
   const isExpanded = (s) => `slide-${s}` === expanded();
 
-  createEffect(() => {
-    setSlideCategories(getUniqueCategories(slides));
-    setCurrentCategory(slides[0][0].category);
-  });
+  setSlideCategories(getUniqueCategories(slides));
 
   return (
     <div class="min-h-screen flex flex-col">
@@ -169,7 +170,7 @@ function App() {
               <div
                 class={`text-gray-800 text-nowrap cursor-pointer bg-white border-gray-300 py-2 px-6 rounded-full hover:bg-white
                   dark:bg-gray-800 dark:text-gray-100 dark:border dark:border-gray-700 dark:hover:bg-gray-700 transition-colors duration-300
-                  ${currentCategory() !== category && "opacity-75"}`}
+                  ${currentCategory() !== category ? "opacity-75" : ""}`}
                 onClick={() => setCurrentCategory(category)}
               >
                 {category}
